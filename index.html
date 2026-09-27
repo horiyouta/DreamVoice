@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Voice 公式ガイド</title>
+<meta name="description" content="Dream Voice は、わずか3秒のお手本音声から声をクローンし、オフライン完結でテキストを自由に読み上げられる Windows 向けボイス生成ソフトです。">
+<link rel="icon" href="data/logo.jpg">
+
+<script src="vendor/tailwindcss.js"></script>
+<link rel="stylesheet" href="fonts/fonts.css?v=1">
+
+<!-- 1) Tailwind → 2) Yumeiro Glass コア（このページ内で一度だけ読み込む） -->
+<link rel="stylesheet" href="dist/yumeiro-glass.css?v=1">
+<script src="dist/yumeiro-glass.js?v=1"></script>
+
+<!-- ガイドサイト固有スタイル -->
+<link rel="stylesheet" href="assets/site.css?v=1">
+</head>
+<body class="yg-bg-fallback">
+
+<canvas id="bubbleGl" aria-hidden="true"></canvas>
+<canvas id="liquid" aria-hidden="true"></canvas>
+
+<!-- サイトナビ（タブ切替） -->
+<nav data-yg-sidebar class="fixed top-0 left-0 right-0 z-40 h-14 flex items-center px-4">
+  <div class="yg-sidebar-inner">
+    <img src="data/logo.jpg" alt="" class="dv-logo dv-logo-nav">
+    <div class="yg-sidebar-menu">
+      <button class="yg-nav-btn is-active" data-yg-page-link="home" data-yg-page-group="#docPages">🏠 Dream Voice とは</button>
+      <button class="yg-nav-btn" data-yg-page-link="quickstart" data-yg-page-group="#docPages">🚀 クイックスタート</button>
+      <button class="yg-nav-btn" data-yg-page-link="guide" data-yg-page-group="#docPages">📚 機能別詳細ガイド</button>
+      <!-- <button class="yg-nav-btn" data-yg-page-link="faq" data-yg-page-group="#docPages">❓ FAQ・トラブルシューティング</button> -->
+    </div>
+    <div class="yg-sidebar-spacer"></div>
+    <button class="dv-theme-chip yg-plain dv-toggle-btn" data-yg-toggle="theme" style="border-radius:99px;background:rgba(255,255,255,.4);border:1px solid rgba(209,213,219,.5);padding:6px 12px;">🌓</button>
+  </div>
+</nav>
+
+<div id="display">
+<div id="docPages" data-yg-page-group data-yg-initial-page="home">
+
+  <!-- ══════════════════ Dream Voice とは ══════════════════ -->
+  <div data-yg-page="home">
+  <div class="dv-page">
+
+    <section class="yg-glass dv-panel dv-hero">
+      <img src="data/logo.jpg" alt="Dream Voice" class="dv-logo" style="width:64px;height:64px;margin:0 auto;">
+      <h1 class="dv-hero-title">Dream Voice</h1>
+      <p class="dv-hero-sub">わずか3秒のお手本音声から声をクローンし、オフライン完結でテキストを自由に読み上げる。<br>Windows 向けボイス生成ソフトです。</p>
+      <div class="dv-hero-badges">
+        <span class="dv-badge dv-badge-os">🪟 Windows 専用</span>
+        <span class="dv-badge">🔌 オフライン動作</span>
+        <span class="dv-badge dv-badge-full">🧩 Full プラグイン対応</span>
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <p class="dv-eyebrow">Concept</p>
+      <h2 class="dv-panel-title">✨ Dream Voice とは</h2>
+      <p class="dv-lead">
+        好きな声のサンプルを少しだけ聞かせるだけで、その声で好きな文章をしゃべらせられる ―
+        それが Dream Voice のコンセプトです。3〜10秒程度の音声サンプルと書き起こしテキストを与えるだけで、
+        その人の声の特徴を抽出（いわゆる<strong>ゼロショット音声クローン</strong>）し、
+        抽出した声（＝「スピーカー」）を使って任意のテキストを読み上げた音声を生成できます。
+      </p>
+      <ul style="margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;">
+        <li class="dv-hint">一度セットアップすれば<strong style="color:var(--yg-ink);">完全にオフライン</strong>で動作。音声データは自分の PC の中だけで完結し、外部サーバーへアップロードされることはありません。</li>
+        <li class="dv-hint">淡いパステルカラーとガラス質感を基調にした、ファンタジックで柔らかい「夢（Dream）」らしい世界観のデザイン。</li>
+      </ul>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <p class="dv-eyebrow">Use cases</p>
+      <h2 class="dv-panel-title">🎯 主な用途</h2>
+      <p class="dv-hint">動画クリエイター・ゲーム開発者・ボイスドラマ制作者から、自分の声を配布・販売したい方まで、どなたでも簡単にご利用いただけます。</p>
+      <div class="dv-feature-grid">
+        <div class="dv-feature-card"><div class="dv-feature-icon">🎬</div><div class="dv-feature-name">動画・ナレーション制作</div><div class="dv-feature-desc">キャラクターボイスを使った動画やナレーション読み上げコンテンツの制作に。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">🎮</div><div class="dv-feature-name">ゲーム開発</div><div class="dv-feature-desc">ゲーム内キャラクターのセリフ音声をまとめて生成。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">🎭</div><div class="dv-feature-name">ボイスドラマ制作</div><div class="dv-feature-desc">複数キャラクターの会話を一括生成し、ドラマ仕立ての音声に。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">📦</div><div class="dv-feature-name">声の配布・販売</div><div class="dv-feature-desc">自分の声を「スピーカー」としてパッケージ化し、配布・販売したい方にも。</div></div>
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <p class="dv-eyebrow">Overview</p>
+      <h2 class="dv-panel-title">🗺️ 全体構成（画面タブ）</h2>
+      <p class="dv-hint">アプリの上部ナビゲーションは、次の6つに分かれています。詳しい使い方は「機能別詳細ガイド」で解説しています。</p>
+      <div class="dv-feature-grid">
+        <div class="dv-feature-card"><div class="dv-feature-icon">🔊</div><div class="dv-feature-name">音声を作る</div><div class="dv-feature-desc">メイン機能。声を登録し、テキストを音声に変換します。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">🗂</div><div class="dv-feature-name">スピーカー</div><div class="dv-feature-desc">登録済みの声（スピーカー）の一覧・管理・共有。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">🧪</div><div class="dv-feature-name">アトリエ</div><div class="dv-feature-desc">声のブレンドやランダム生成など実験的機能。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">💬</div><div class="dv-feature-name">会話を作る<span class="dv-inline-badge">Full限定</span></div><div class="dv-feature-desc">複数キャラクターのセリフを一括生成します。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">📖</div><div class="dv-feature-name">よみかた辞書</div><div class="dv-feature-desc">固有名詞などの読み方をあらかじめ登録できます。</div></div>
+        <div class="dv-feature-card"><div class="dv-feature-icon">⚙️</div><div class="dv-feature-name">設定</div><div class="dv-feature-desc">書き出し形式、テーマ、環境音などの各種設定。</div></div>
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <p class="dv-eyebrow">Free vs Full Plugin</p>
+      <h2 class="dv-panel-title">🆓 無料版と Full プラグイン版の違い</h2>
+      <p class="dv-hint">Dream Voice は、声のクローン技術そのものは無料でしっかり体験できるうえで、より便利に・より本格的に使うための機能を「Full プラグイン」として追加導入できる構成になっています。</p>
+
+      <div class="dv-compare">
+        <div class="yg-glass dv-compare-col">
+          <div class="dv-compare-head"><h3>🆓 無料版</h3><span>追加インストールなしで利用可</span></div>
+          <ul class="dv-compare-list">
+            <li>お手本音声から声を抽出する「ゼロショット音声クローン」を体験可能</li>
+            <li>対応言語は<strong>日本語のみ</strong></li>
+            <li>生成できる音声の長さは<strong>約3秒まで</strong></li>
+            <li>スピーカーの管理・パッケージ共有は利用可能</li>
+            <li>アトリエ（ボイスミキサー・ランダムボイスなど）も利用可能</li>
+          </ul>
+        </div>
+        <div class="yg-glass dv-compare-col is-full">
+          <div class="dv-compare-head"><h3>🧩 Full プラグイン版</h3><span>プラグイン追加で制限解除</span></div>
+          <ul class="dv-compare-list is-locked">
+            <li>対応言語が<strong>英語・中国語・韓国語</strong>にも拡大</li>
+            <li>音声生成の長さ制限が<strong>解除</strong>（無制限）</li>
+            <li>複数キャラクターの会話を一括生成する「会話を作る」機能</li>
+            <li>ボイススタイル（不機嫌・甘え・囁きなど）の追加スタイルが利用可能</li>
+            <li>作成したスピーカーパッケージ（.dvpkg）の商用利用が可能に（声の配布・販売にも利用できます）</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel" style="align-items:center;text-align:center;">
+      <h2 class="dv-panel-title">さっそく使ってみる</h2>
+      <p class="dv-hint">インストールから最初の声づくり・読み上げまでは「クイックスタート」でまとめて解説しています。</p>
+      <button class="dv-btn-outline yg-plain" data-yg-page-link="quickstart" data-yg-page-group="#docPages" style="padding:10px 22px;font-size:13px;">🚀 クイックスタートを見る</button>
+    </section>
+
+  </div>
+  </div>
+
+  <!-- ══════════════════ クイックスタート ══════════════════ -->
+  <div data-yg-page="quickstart">
+  <div class="dv-page">
+
+    <section class="yg-glass dv-panel dv-hero">
+      <p class="dv-eyebrow">Quickstart</p>
+      <h1 class="dv-hero-title" style="font-size:clamp(22px,3.4vw,32px);">🚀 クイックスタート</h1>
+      <p class="dv-hero-sub">インストールから、最初の声づくり（スピーカー登録）・テキスト読み上げまでを一気に解説します。</p>
+    </section>
+
+    <section class="dv-callout">
+      <div class="dv-callout-icon">🖥️</div>
+      <div>
+        <p class="dv-hint" style="margin-bottom:6px;"><strong style="color:var(--yg-ink);">動作確認済み環境</strong></p>
+        <div class="dv-callout-specs">
+          <span class="dv-callout-spec">🪟 Windows 11</span>
+          <span class="dv-callout-spec">💻 CPU: Core i7</span>
+          <span class="dv-callout-spec">🧠 RAM: 16GB</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <h2 class="dv-panel-title">📦 インストール手順</h2>
+      <div class="dv-steps">
+
+        <div class="dv-step">
+          <div class="dv-step-num">1</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">ZIP ファイルをダウンロードして解凍する</p>
+            <p class="dv-step-desc">配布ページから ZIP ファイルをダウンロードし、任意の場所に解凍します。</p>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">2</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">セットアップファイルを実行する</p>
+            <p class="dv-step-desc"><code>DreamVoice_Setup</code> で始まるファイルをダブルクリックして開きます。</p>
+            <figure class="dv-figure">
+              <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（セットアップ画面）">
+                <img src="data/screenshots/quickstart-01-setup.jpg" alt="セットアップ画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+              </div>
+            </figure>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">3</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">インストール完了後、自動で起動する</p>
+            <p class="dv-step-desc">インストールが完了すると、自動でアプリケーションが起動します。以降は Windows のスタートメニューからいつでも起動できます。</p>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">4</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">初回のみ「モデルのダウンロード」が実行される</p>
+            <p class="dv-step-desc">完了すると自動でアプリが起動します。通信環境によっては 15 分程度かかる場合があります。ダウンロード中は、はじめに利用規約の確認画面が表示されます。最後までスクロールして内容をご確認のうえ「同意して始める」を押してください（ダウンロード自体はこの画面の裏で並行して進みます）。以降の起動では、この画面は表示されず完全にオフラインで動作します。</p>
+            <figure class="dv-figure">
+              <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（モデルダウンロード中の画面）">
+                <img src="data/screenshots/quickstart-02-download.jpg" alt="モデルダウンロード画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+              </div>
+            </figure>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <h2 class="dv-panel-title">🎙️ 声を覚えさせる（スピーカーを作る）</h2>
+      <p class="dv-hint">アプリが起動したら、まずは「🔊 音声を作る」タブの左側パネルで、お手本の声を登録してみましょう。</p>
+      <div class="dv-steps">
+
+        <div class="dv-step">
+          <div class="dv-step-num">1</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">お手本音声をアップロードする</p>
+            <p class="dv-step-desc">WAV 形式の音声ファイル（3〜10秒推奨）を、ドロップゾーンにドラッグ＆ドロップするか、クリックして選択します。</p>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">2</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">書き起こしテキストを入力する</p>
+            <p class="dv-step-desc">アップロードした音声と一致する言葉を、テキスト欄に入力します。</p>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">3</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">言語と声の名前を指定して「声を覚える」を押す</p>
+            <p class="dv-step-desc">日本語／英語／中国語／韓国語から言語を選び、わかりやすい名前を付けます（無料版では日本語のみ利用できます）。しばらく待つと、声の特徴データが作成されます。</p>
+            <figure class="dv-figure">
+              <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（お手本から声を抽出パネル）">
+                <img src="data/screenshots/quickstart-03-speaker.jpg" alt="声を覚えるパネル" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+              </div>
+            </figure>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <h2 class="dv-panel-title">🔊 テキストを読み上げる</h2>
+      <p class="dv-hint">声ができあがったら、右側の「音声を作る」パネルでさっそく読み上げてみましょう。</p>
+      <div class="dv-steps">
+
+        <div class="dv-step">
+          <div class="dv-step-num">1</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">スピーカーを選ぶ</p>
+            <p class="dv-step-desc">先ほど作成した声を、スピーカー選択欄から選びます。</p>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">2</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">読ませたいテキストを入力する</p>
+            <p class="dv-step-desc">長い文章は句点（。）などで自動的に文単位に分割され、自然な間（ま）をとりながら結合されます。</p>
+          </div>
+        </div>
+
+        <div class="dv-step">
+          <div class="dv-step-num">3</div>
+          <div class="dv-step-body">
+            <p class="dv-step-title">処理エンジンを選んで生成する</p>
+            <p class="dv-step-desc"><strong style="color:var(--yg-ink);">CPU</strong> または <strong style="color:var(--yg-ink);">CUDA（対応 GPU）</strong> を選択できます。GPU があればより高速に生成できます。生成された音声はその場で再生でき、WAV／MP3 など指定した形式でダウンロードできます。</p>
+            <figure class="dv-figure">
+              <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（音声を作るパネルと再生結果）">
+                <img src="data/screenshots/quickstart-04-synthesis.jpg" alt="音声を作るパネル" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+              </div>
+            </figure>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="yg-glass dv-panel" style="align-items:center;text-align:center;">
+      <h2 class="dv-panel-title">🎉 これで基本の使い方は完了です</h2>
+      <p class="dv-hint">スピーカーの管理・アトリエでの声の実験・会話を作る機能など、さらに詳しい使い方は「機能別詳細ガイド」をご覧ください。</p>
+      <button class="dv-btn-outline yg-plain" data-yg-page-link="guide" data-yg-page-group="#docPages" style="padding:10px 22px;font-size:13px;">📚 機能別詳細ガイドを見る</button>
+    </section>
+
+  </div>
+  </div>
+
+  <!-- ══════════════════ 機能別詳細ガイド ══════════════════ -->
+  <div data-yg-page="guide">
+  <div class="dv-page">
+
+    <section class="yg-glass dv-panel dv-hero">
+      <p class="dv-eyebrow">Feature Guide</p>
+      <h1 class="dv-hero-title" style="font-size:clamp(22px,3.4vw,32px);">📚 機能別詳細ガイド</h1>
+      <p class="dv-hero-sub">各タブの使い方を、詳しく解説します。</p>
+    </section>
+
+    <nav class="yg-glass dv-panel" aria-label="目次">
+      <p class="dv-eyebrow" style="margin:0;">目次</p>
+      <div class="dv-toc">
+        <a href="#synth">🔊 音声を作る</a>
+        <a href="#speakers">🗂 スピーカー</a>
+        <a href="#atelier">🧪 アトリエ</a>
+        <a href="#batch">💬 会話を作る</a>
+        <a href="#dict">📖 よみかた辞書</a>
+        <a href="#other">⚙️ その他</a>
+      </div>
+    </nav>
+
+    <section id="synth" class="yg-glass dv-panel dv-guide-section">
+      <h2>🔊 音声を作る（メイン機能）</h2>
+
+      <h3>声を覚える（お手本から声を抽出）</h3>
+      <ul>
+        <li>WAV 形式の音声ファイル（<strong>3〜10秒推奨</strong>）をドラッグ＆ドロップ、またはクリックしてアップロードします。</li>
+        <li>音声と一致する書き起こしテキストを入力します。</li>
+        <li>言語（日本語／英語／中国語／韓国語）と、この声の名前を指定して「声を覚える」を押すと、その声の特徴データが作成され、以後「スピーカー」として選択できるようになります。</li>
+      </ul>
+
+      <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（お手本から声を抽出パネル）">
+          <img src="data/screenshots/quickstart-03-speaker.jpg" alt="声を覚えるパネル" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure>
+
+      <h3>音声を作る（読み上げ）</h3>
+      <ul>
+        <li>登録済みのスピーカーを選び、読ませたいテキストを入力します。</li>
+        <li>長い文章は句点（。）などで自動的に文単位に分割され、自然な間（ま）をとりながら結合されます。</li>
+        <li>よみかた辞書に登録した言葉は自動的に置き換えて読み上げられます。</li>
+        <li>合成言語（日本語／英語／中国語／韓国語）を選べます。</li>
+        <li>処理エンジンとして <strong>CPU</strong> または <strong>CUDA（対応 GPU）</strong> を選択でき、GPU があればより高速に生成できます。</li>
+        <li>「詳細設定」を開くと、読み上げの表現力に関わる細かいパラメータ（ランダム性の強さ、話速など）や、CPU 利用時に使える高速合成エンジンの有効化も調整できます。</li>
+        <li>生成された音声はその場で再生でき、指定した形式（WAV／MP3、サンプルレート、モノラル・ステレオ）でダウンロードできます。</li>
+      </ul>
+
+      <hr>
+      <h3>🆓 無料版と Full 版の違い</h3>
+      <p>無料版では、生成できる音声は<strong>日本語のみ・約3秒まで</strong>に制限されています。「Full」プラグインを追加で導入すると、この制限が解除され、英語・中国語・韓国語への対応、無制限の長さでの音声生成、後述の「会話を作る」機能、追加のボイススタイルなどが利用できるようになります。</p>
+
+      <!-- <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（音声を作るパネルと再生結果）">
+          <img src="data/screenshots/quickstart-04-synthesis.jpg" alt="音声を作るパネル" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure> -->
+    </section>
+
+    <section id="speakers" class="yg-glass dv-panel dv-guide-section">
+      <h2>🗂 スピーカー（声の管理）</h2>
+      <ul>
+        <li>これまでに作成した声（スピーカー）が一覧表示され、言語や作成日時などを確認できます。</li>
+        <li>不要な声は削除できますが、即座に完全削除されるのではなく、一定期間（<strong>48時間</strong>）は「ゴミ箱」に保持されるため、誤って削除してしまっても復旧の余地があります。</li>
+        <li>声は<strong>パッケージ化</strong>（<code>.dvpkg</code> 形式）して、アイコン画像・デモ音声・作者名・説明文つきの「話者パッケージ」として書き出すことができます。これは他の Dream Voice ユーザーに配布・共有できる自己完結型のファイルです。</li>
+        <li>他の人から受け取った <code>.dvpkg</code> ファイルを読み込んで、自分のスピーカー一覧に追加することもできます。</li>
+        <li>一度パッケージ化した声は、<strong>中身を後から書き換えることができません</strong>（削除して作り直すのみ）。これは配布後に改造されてしまうことを防ぐための仕様です。</li>
+        <li><span class="dv-inline-badge">Full限定</span> Full プラグイン導入後は、作成したスピーカーパッケージを<strong>商用利用</strong>することも可能になります（声の配布・販売など）。</li>
+      </ul>
+
+      <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（スピーカー一覧・パッケージ書き出し画面）">
+          <img src="data/screenshots/guide-speakers-01.jpg" alt="スピーカー一覧画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure>
+    </section>
+
+    <section id="atelier" class="yg-glass dv-panel dv-guide-section">
+      <h2>🧪 アトリエ（実験的な声づくり機能）</h2>
+
+      <h3>ボイスミキサー</h3>
+      <p>2つの既存スピーカーを選び、混ぜる比率を指定して、両者の中間のような新しい声を作成できます。</p>
+
+      <h3>ランダムボイス</h3>
+      <p>あらかじめ学習された「声の空間」からランダムに声を1つサンプリングし、その場で試し読みできます。ボタン一つで気軽に未知の声と出会うことができ、気に入った声はそのままスピーカーとして保存できます。</p>
+
+      <h3>ボイススタイル <span class="dv-inline-badge">一部 Full 限定</span>（試験的機能）</h3>
+      <ul>
+        <li>既存のスピーカーに対して、「不機嫌」「甘え」「囁き」といった感情・声色の変化を後付けで適用できます。</li>
+        <li>変化の強さは <strong>0（元の声のまま）〜3（かなり誇張）</strong> まで調整可能です。</li>
+        <li>スタイル適用前後を聴き比べる機能もあります。</li>
+        <li>一部のスタイル（不機嫌・甘え・囁きなど）は Full 版限定です。</li>
+        <li>気に入ったスタイル結果は、新しいスピーカーとして保存できます。</li>
+      </ul>
+
+      <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（ボイスミキサー／ランダムボイス／ボイススタイル画面）">
+          <img src="data/screenshots/guide-atelier-01.jpg" alt="アトリエ画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure>
+    </section>
+
+    <section id="batch" class="yg-glass dv-panel dv-guide-section">
+      <h2>💬 会話を作る <span class="dv-inline-badge">Full 版限定</span></h2>
+      <ul>
+        <li>複数のキャラクター（スピーカー）のセリフをまとめて入力し、まるでドラマの台本のように連続した1本の音声として一括生成できます。</li>
+        <li>セリフ同士の間隔（ミリ秒単位）を調整できます。</li>
+        <li>1行ずつ話速を個別に設定することもできます。</li>
+        <li>一部のセリフだけ生成し直したい場合、他の行は再利用しつつ、その行だけ再生成できます（無駄な待ち時間を減らす工夫）。</li>
+        <li>結合済みの音声（1ファイル）と、セリフごとの個別音声をまとめた zip の両方をダウンロードできます。</li>
+        <li>台本（セリフの内容）はファイルとして保存・読み込みができるため、続きを別の日に作業したり、複数の台本を管理したりできます。</li>
+      </ul>
+
+      <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（会話を作る画面）">
+          <img src="data/screenshots/guide-batch-01.jpg" alt="会話を作る画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure>
+    </section>
+
+    <section id="dict" class="yg-glass dv-panel dv-guide-section">
+      <h2>📖 よみかた辞書</h2>
+      <ul>
+        <li>「特定の言葉をこう読んでほしい」というルールを登録しておける辞書機能です（人名・固有名詞の読み間違い対策など）。</li>
+        <li>言語ごとに個別のルールを設定することも、すべての言語に共通のルールとして設定することもできます。</li>
+        <li>登録しておくと、以後「音声を作る」で入力したテキスト内の該当する言葉が自動的に読み方へ置き換えられてから読み上げられます。</li>
+      </ul>
+
+      <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（よみかた辞書 一覧画面）">
+          <img src="data/screenshots/guide-dict-01.jpg" alt="よみかた辞書画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure>
+    </section>
+
+    <section id="other" class="yg-glass dv-panel dv-guide-section">
+      <h2>⚙️ その他（設定）</h2>
+      <ul>
+        <li>書き出す音声のデフォルト形式（WAV／MP3）、チャンネル（モノラル／ステレオ）、サンプルレートをあらかじめ指定できます。</li>
+        <li>画面テーマ（ライト／ダーク）や、アプリの環境音（効果音・BGM）の ON/OFF を切り替えられます。</li>
+        <li>「アトリエ」のランダムボイスで読み上げさせるデフォルトのセリフ文を設定できます。</li>
+        <li>これまでに生成した音声ファイルをまとめて削除する機能もあります。</li>
+        <li>利用規約・同梱している第三者ソフトウェアのライセンス情報・更新履歴も、ここからいつでも確認できます。</li>
+      </ul>
+
+      <figure class="dv-figure">
+        <div class="dv-shot" data-placeholder-label="📸 スクリーンショット&#10;（設定画面）">
+          <img src="data/screenshots/guide-other-01.jpg" alt="設定画面" onerror="this.closest('.dv-shot').classList.add('dv-shot-empty')">
+        </div>
+      </figure>
+    </section>
+
+  </div>
+  </div>
+
+  <!-- ══════════════════ FAQ ══════════════════ -->
+  <div data-yg-page="faq">
+  <div class="dv-page">
+
+    <section class="yg-glass dv-panel dv-hero">
+      <p class="dv-eyebrow">FAQ</p>
+      <h1 class="dv-hero-title" style="font-size:clamp(22px,3.4vw,32px);">❓ FAQ・トラブルシューティング</h1>
+      <p class="dv-hero-sub">よくある質問と、困ったときの対処法をまとめています。</p>
+    </section>
+
+    <section class="yg-glass dv-panel">
+      <p class="dv-hint">⚠️ このページは準備中です。ここに、実際によく寄せられる質問・トラブル事例を今後追加していきます。</p>
+    </section>
+
+    <div class="dv-feature-grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));">
+      <section class="yg-glass dv-faq-category">
+        <h3>📦 インストール・起動について</h3>
+        <div class="dv-faq-empty">準備中<br>（例：起動しない、モデルのダウンロードが終わらない　等）</div>
+      </section>
+
+      <section class="yg-glass dv-faq-category">
+        <h3>🔊 声づくり・音声生成について</h3>
+        <div class="dv-faq-empty">準備中<br>（例：声がうまく再現されない、生成に時間がかかる　等）</div>
+      </section>
+
+      <section class="yg-glass dv-faq-category">
+        <h3>🧩 Full プラグインについて</h3>
+        <div class="dv-faq-empty">準備中<br>（例：プラグインの導入方法、対応言語について　等）</div>
+      </section>
+
+      <section class="yg-glass dv-faq-category">
+        <h3>🗂 スピーカー・パッケージについて</h3>
+        <div class="dv-faq-empty">準備中<br>（例：.dvpkg の共有方法、削除の復旧について、商用利用の範囲　等）</div>
+      </section>
+
+      <section class="yg-glass dv-faq-category">
+        <h3>⚙️ 動作環境・トラブル全般</h3>
+        <div class="dv-faq-empty">準備中<br>（例：推奨環境、エラーが出たときの対処　等）</div>
+      </section>
+
+      <section class="yg-glass dv-faq-category">
+        <h3>📮 その他のお問い合わせ</h3>
+        <div class="dv-faq-empty">上記で解決しない場合は、下記の連絡先までお気軽にどうぞ。</div>
+      </section>
+    </div>
+
+  </div>
+  </div>
+
+</div>
+</div>
+
+<footer class="dv-footer">
+  <section class="yg-glass dv-panel dv-footer-panel">
+    <p class="dv-hint">📮 ご質問・不具合報告は、BOOTH のメッセージ機能よりお気軽にご連絡ください。Scratch・YouTube などのアカウントをお持ちの方は、そちらからのご連絡も受け付けております。</p>
+    <small>© horiyouta ― Dream Voice 公式ガイド</small>
+  </section>
+</footer>
+
+<!-- ゆめいろグラスの背景・流体・音声エンジン群（body 最下部・1回だけ読み込み） -->
+<script src="vendor/bubble-bg.js"></script>
+<script src="vendor/liquid-bg.js"></script>
+<script src="vendor/bgm-audio.js"></script>
+<script src="vendor/liquid-audio.js"></script>
+<script>YumeiroGlass.init();</script>
+</body>
+</html>

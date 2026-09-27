@@ -1,0 +1,96 @@
+/* ============================================================
+   Dream Voice — ローカルフォント定義 (オフライン用)
+   Google Fonts の 'Zen Kaku Gothic New' と 'Outfit' をローカル配信します。
+   ============================================================ */
+
+/* ─── Zen Kaku Gothic New ─── */
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./ZenKakuGothicNew-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./ZenKakuGothicNew-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./ZenKakuGothicNew-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./ZenKakuGothicNew-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./ZenKakuGothicNew-Black.ttf') format('truetype');
+}
+
+/* ─── Outfit (Variable Font 100-900) ─── */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./Outfit[wght].ttf') format('truetype-variations'),
+       url('./Outfit[wght].ttf') format('truetype');
+}
+
+/* 各ウェイト個別指定環境向けのフォールバック定義 */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./Outfit[wght].ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./Outfit[wght].ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./Outfit[wght].ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./Outfit[wght].ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./Outfit[wght].ttf') format('truetype');
+}

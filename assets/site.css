@@ -1,0 +1,212 @@
+/* ============================================================
+   Dream Voice 公式ガイドサイト — 上乗せスタイル
+   ベースのガラス質感・配色・フォントは Yumeiro Glass (--yg-*) に委譲し、
+   ここではガイドサイト固有のレイアウト・コンポーネントのみ定義する。
+   （dist/yumeiro-glass.css を必ず先に読み込むこと）
+   ============================================================ */
+
+html, body { margin: 0; min-height: 100%; }
+#display { padding-top: 56px; }
+.hidden { display: none !important; }
+
+/* ===== ページ共通レイアウト ===== */
+.dv-page {
+  width: 100%; box-sizing: border-box;
+  max-width: var(--yg-content-max, 1040px); margin-inline: auto;
+  padding: 40px var(--yg-side-pad, 24px) 96px;
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: var(--yg-gap-lg, 28px);
+}
+
+.dv-panel {
+  width: 100%; min-width: 0; box-sizing: border-box;
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 12px; padding: 26px 30px;
+}
+
+.dv-hero { text-align: center; padding: 40px 28px; gap: 10px; }
+.dv-hero-title {
+  margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px;
+  font-size: clamp(26px, 4vw, 38px); font-weight: 900;
+  background: var(--yg-accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.dv-hero-sub { margin: 0; font-size: 15px; color: var(--yg-ink-soft, #6b7280); }
+.dv-hero-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px; }
+
+.dv-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; padding: 5px 13px; border-radius: 99px;
+  background: rgba(167,139,250,.14); color: #7c3aed; border: 1px solid rgba(167,139,250,.25);
+}
+.dv-badge.dv-badge-full { background: rgba(244,114,182,.14); color: #db2777; border-color: rgba(244,114,182,.25); }
+.dv-badge.dv-badge-os { background: rgba(103,232,249,.16); color: #0e7490; border-color: rgba(103,232,249,.3); }
+
+.dv-panel-title {
+  margin: 0; font-size: 18px; font-weight: 800; color: var(--yg-ink, #374151);
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+}
+.dv-eyebrow {
+  font-size: 11px; font-weight: 800; letter-spacing: .08em; color: var(--yg-accent, #f472b6);
+  text-transform: uppercase; margin: 0;
+}
+.dv-hint { font-size: 13.5px; color: var(--yg-ink-soft, #6b7280); line-height: 1.9; margin: 0; }
+.dv-lead { font-size: 15px; color: var(--yg-ink, #374151); line-height: 2; margin: 0; }
+
+/* ===== フッター ===== */
+.dv-footer {
+  width: 100%; box-sizing: border-box;
+  max-width: var(--yg-content-max, 1040px); margin: 0 auto;
+  padding: 0 24px 56px; display: flex; flex-direction: column; gap: 10px;
+  align-items: center; text-align: center;
+}
+.dv-footer-panel { width: 100%; padding: 22px 26px; gap: 8px; }
+.dv-footer small { font-size: 11px; color: var(--yg-ink-soft, #9ca3af); }
+
+/* ===== ロゴ / アウトラインボタン（HTML側で yg-plain 併記のこと） ===== */
+.dv-logo { display: inline-block; object-fit: cover; border-radius: 50%; flex-shrink: 0; }
+.dv-logo-nav { width: 28px; height: 28px; }
+
+.dv-btn-outline, .dv-btn-outline-a {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  background: rgba(255,255,255,.5); border: 1px solid rgba(209,213,219,.5);
+  border-radius: 10px; padding: 8px 16px; font-size: 12.5px; font-weight: 700;
+  color: var(--yg-ink-soft, #6b7280); cursor: pointer; transition: all .2s; text-decoration: none;
+  font-family: var(--yg-font, inherit);
+}
+.dv-btn-outline:hover, .dv-btn-outline-a:hover { background: rgba(255,255,255,.9); color: var(--yg-ink, #374151); }
+
+/* ===== ナビ内 テーマ切替チップ ===== */
+.dv-theme-chip { flex: 0 0 auto; margin-left: 6px; }
+
+/* ===== 全体構成カード（6タブ紹介・ホーム） ===== */
+.dv-feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.dv-feature-card {
+  background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.7);
+  border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.05);
+}
+.dv-feature-icon { font-size: 26px; }
+.dv-feature-name { font-weight: 800; font-size: 14.5px; color: var(--yg-ink, #374151); }
+.dv-feature-desc { font-size: 12.5px; color: var(--yg-ink-soft, #9ca3af); line-height: 1.7; }
+
+/* ===== 無料版 / Full 版 比較 ===== */
+.dv-compare {
+  width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--yg-gap, 18px);
+}
+@media (max-width: 760px) { .dv-compare { grid-template-columns: minmax(0,1fr); } }
+.dv-compare-col { display: flex; flex-direction: column; gap: 14px; padding: 24px 26px; }
+.dv-compare-col.is-full { position: relative; }
+/* .dv-compare-col.is-full::before {
+  content: "✨ おすすめ"; position: absolute; top: -12px; right: 22px;
+  background: var(--yg-accent-grad); color: #fff; font-size: 11px; font-weight: 800;
+  padding: 4px 12px; border-radius: 99px; box-shadow: 0 4px 10px rgba(0,0,0,.12);
+} */
+.dv-compare-head { display: flex; align-items: baseline; gap: 8px; }
+.dv-compare-head h3 { margin: 0; font-size: 17px; font-weight: 900; color: var(--yg-ink, #374151); }
+.dv-compare-head span { font-size: 12px; color: var(--yg-ink-soft, #9ca3af); }
+.dv-compare-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.dv-compare-list li { font-size: 13px; line-height: 1.6; color: var(--yg-ink, #374151); display: flex; gap: 8px; align-items: flex-start; }
+.dv-compare-list li::before { content: "✓"; flex: 0 0 auto; color: #22c55e; font-weight: 900; }
+.dv-compare-list.is-locked li::before { content: "＋"; color: #db2777; }
+
+/* ===== タブ切替（1ページ構成） ===== */
+[data-yg-page] .dv-page { padding-top: 40px; }
+
+table.dv-compare-table { width: 100%; }
+
+/* ===== コールアウト（動作確認済み環境など） ===== */
+.dv-callout {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: rgba(103,232,249,.12); border: 1px solid rgba(103,232,249,.3);
+  border-radius: 16px; padding: 16px 20px;
+}
+.dv-callout-icon { font-size: 22px; flex: 0 0 auto; }
+.dv-callout-specs { display: flex; flex-wrap: wrap; gap: 8px; }
+.dv-callout-spec {
+  font-size: 12px; font-weight: 700; color: #0e7490; background: rgba(255,255,255,.6);
+  padding: 5px 12px; border-radius: 99px; border: 1px solid rgba(103,232,249,.35);
+}
+
+/* ===== クイックスタート: 手順ステップ ===== */
+.dv-steps { display: flex; flex-direction: column; gap: 18px; }
+.dv-step { display: grid; grid-template-columns: 40px 1fr; gap: 16px; }
+.dv-step-num {
+  width: 40px; height: 40px; border-radius: 50%; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 15px; color: #fff; background: var(--yg-accent-grad);
+}
+.dv-step-body { display: flex; flex-direction: column; gap: 8px; }
+.dv-step-title { margin: 0; font-size: 15px; font-weight: 800; color: var(--yg-ink, #374151); }
+.dv-step-desc { margin: 0; font-size: 13.5px; line-height: 1.9; color: var(--yg-ink-soft, #6b7280); }
+.dv-step-desc code {
+  background: rgba(0,0,0,.06); border-radius: 4px; padding: 1px 6px; font-size: .95em;
+}
+
+/* ===== スクリーンショット プレースホルダ ===== */
+.dv-shot {
+  position: relative; width: 100%; border-radius: 16px; overflow: hidden;
+  aspect-ratio: 16 / 9; background: rgba(255,255,255,.4);
+  border: 1px solid rgba(209,213,219,.5);
+}
+.dv-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dv-shot figcaption {
+  margin-top: 6px; font-size: 11px; color: var(--yg-ink-soft, #9ca3af); text-align: center;
+}
+.dv-shot.dv-shot-empty {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(244,114,182,.14), rgba(167,139,250,.14) 55%, rgba(103,232,249,.14));
+  border: 2px dashed rgba(167,139,250,.4);
+}
+.dv-shot.dv-shot-empty img { display: none; }
+.dv-shot.dv-shot-empty::after {
+  content: attr(data-placeholder-label);
+  font-size: 12.5px; font-weight: 700; color: #8b7ba8; text-align: center; padding: 0 16px;
+  white-space: pre-line;
+}
+figure.dv-figure { margin: 0; }
+
+/* ===== 機能ガイド: 目次チップ ===== */
+.dv-toc { display: flex; flex-wrap: wrap; gap: 8px; }
+.dv-toc a {
+  display: inline-flex; align-items: center; gap: 5px; text-decoration: none;
+  font-size: 12.5px; font-weight: 700; color: var(--yg-ink-soft, #6b7280);
+  background: rgba(255,255,255,.5); border: 1px solid rgba(209,213,219,.5);
+  border-radius: 99px; padding: 6px 14px; transition: all .2s;
+}
+.dv-toc a:hover { background: rgba(255,255,255,.9); color: var(--yg-ink, #374151); }
+
+/* ===== 機能ガイド: 各セクション ===== */
+.dv-guide-section { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 76px; }
+.dv-guide-section h2 {
+  margin: 0; font-size: 19px; font-weight: 900; color: var(--yg-ink, #374151);
+  display: flex; align-items: center; gap: 8px;
+}
+.dv-guide-section h3 {
+  margin: 8px 0 0; font-size: 14.5px; font-weight: 800; color: var(--yg-ink, #374151);
+}
+.dv-guide-section p { margin: 0; font-size: 13.5px; line-height: 1.9; color: var(--yg-ink-soft, #6b7280); }
+.dv-guide-section ul, .dv-guide-section ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; }
+.dv-guide-section li { font-size: 13.5px; line-height: 1.8; color: var(--yg-ink-soft, #6b7280); }
+.dv-guide-section li strong { color: var(--yg-ink, #374151); }
+.dv-guide-section hr { border: none; border-top: 1px solid rgba(209,213,219,.5); margin: 4px 0; }
+
+/* Full版限定バッジをテキスト内に埋め込む用 */
+.dv-inline-badge {
+  display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 800;
+  padding: 1px 9px; border-radius: 99px; background: rgba(244,114,182,.14); color: #db2777;
+  vertical-align: middle; margin-left: 2px;
+}
+
+/* ===== FAQ プレースホルダ ===== */
+.dv-faq-category {
+  display: flex; flex-direction: column; gap: 10px; padding: 20px 24px;
+}
+.dv-faq-category h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--yg-ink, #374151); }
+.dv-faq-empty {
+  border: 2px dashed rgba(167,139,250,.35); border-radius: 12px; padding: 18px;
+  font-size: 12.5px; color: #8b7ba8; text-align: center; line-height: 1.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dv-step-num { transition: none; }
+}

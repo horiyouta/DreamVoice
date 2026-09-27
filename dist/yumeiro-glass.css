@@ -1,0 +1,820 @@
+/* ============================================================================
+   Yumeiro Glass / ゆめいろグラス — v1.1.0
+   ----------------------------------------------------------------------------
+   「モダン・サイバーな Liquid Glass」×「ゆめふわで明るくかわいい」を両立する
+   ブランド専用 CSS ライブラリ。Tailwind CSS などのユーティリティフレームワーク
+   と併用する前提で、クラスはすべて `yg-` プレフィックス、CSS変数はすべて
+   `--yg-` プレフィックスに統一してある（Tailwindの `bg-*` 等と衝突しない）。
+
+   読み込み順の目安:
+     1. Tailwind (任意)
+     2. yumeiro-glass.css   ← このファイル
+     3. vendor/bubble-bg.js, vendor/liquid-bg.js (任意・背景エンジン)
+     4. yumeiro-glass.js
+   ========================================================================= */
+
+/* ==========================================================================
+   1. Design Tokens
+   ========================================================================== */
+:root{
+  /* --- typography --- */
+  --yg-font: 'Zen Kaku Gothic New', 'Outfit', -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+
+  /* --- radius --- */
+  --yg-radius-xs: 8px;
+  --yg-radius-sm: 12px;
+  --yg-radius-md: 16px;
+  --yg-radius-lg: 22px;
+  --yg-radius-xl: 28px;
+  --yg-radius-media: 12px;
+  --yg-radius-pill: 999px;
+
+  /* --- spacing / layout --- */
+  --yg-gap: 18px;
+  --yg-gap-sm: 10px;
+  --yg-gap-lg: 28px;
+  --yg-content-max: 1120px;
+  --yg-side-pad: clamp(16px, 5vw, 56px);
+  --yg-mobile-bp: 720px;
+
+  /* --- brand palette (light / default) --- */
+  --yg-accent:        #ffa7fc; /* ゆめふわピンク */
+  --yg-accent-2:      #d9b7ff; /* ラベンダー（中間色） */
+  --yg-accent-3:      #94d0f5; /* やさしいスカイブルー */
+  --yg-accent-4:      #94d0f5; /* accent-3 と統一 */
+  --yg-accent-grad: linear-gradient(135deg, var(--yg-accent) 0%, var(--yg-accent-2) 55%, var(--yg-accent-3) 100%);
+  --yg-accent-grad-soft: linear-gradient(135deg, rgba(244,185,243,.85), rgba(217,192,245,.85) 55%, rgba(170,217,247,.85));
+
+  --yg-ink:        #554e46;
+  --yg-ink-soft:   #8d8378;
+  --yg-ink-faint:  #b2a99e;
+  --yg-ink-on-accent: #f3f2ff; /* パステル背景でも読めるよう濃色に */
+
+  /* --- 注意・削除まわり（ダイアログの danger トーン用。ブランドの世界観に合わせたやわらかいローズ） --- */
+  --yg-danger:      #ee6f9c;
+  --yg-danger-grad: linear-gradient(135deg, #ff9dbb 0%, #ee6f9c 100%);
+
+  /* --- glass surfaces (light) --- */
+  --yg-glass-bg:        rgba(255,255,255,.50);
+  --yg-glass-bg-strong: rgba(255,255,255,.80);
+  --yg-glass-bg-soft:   rgba(255,255,255,.28);
+  --yg-glass-border:        rgba(255,255,255,.65);
+  --yg-glass-border-strong: rgba(255,255,255,.90);
+  --yg-glass-blur: 22px;
+  --yg-glass-sat: 160%;
+  --yg-shadow-sm: 0 4px 18px rgba(80,50,20,.08);
+  --yg-shadow-md: 0 10px 32px rgba(80,50,20,.10);
+  --yg-shadow-lg: 0 18px 44px rgba(203,178,242,.22), 0 8px 22px rgba(170,217,247,.16);
+  --yg-inset-hi:  inset 0 1px 0 rgba(255,255,255,.8);
+
+  --yg-scrim-bg: rgba(30,20,45,.30);
+  --yg-scrim-blur: 10px;
+
+  /* --- motion --- */
+  --yg-ease:      cubic-bezier(.2,.8,.2,1);
+  --yg-ease-pop:  cubic-bezier(.22,1.12,.36,1);
+  --yg-dur-fast: .18s;
+  --yg-dur:      .32s;
+  --yg-dur-slow: .55s;
+
+  /* --- surface for page bg fallback --- */
+  --yg-page-bg-1: #fff7ef;
+  color-scheme: light;
+}
+
+/* --- dark theme overrides: toggled via [data-yg-theme="dark"] on <html> --- */
+[data-yg-theme="dark"]{
+  color-scheme: dark;
+  --yg-ink:        #f3f2ff;
+  --yg-ink-soft:   #d6d4f5; /* 通常のテキストはより明るく */
+  --yg-ink-faint:  #9491c4;
+  --yg-ink-on-accent: #f3f2ff;
+
+  --yg-glass-bg:        rgba(24,18,46,.55);
+  --yg-glass-bg-strong: rgba(34,26,62,.80);
+  --yg-glass-bg-soft:   rgba(20,15,38,.35);
+  --yg-glass-border:        rgba(255,255,255,.14);
+  --yg-glass-border-strong: rgba(255,255,255,.24);
+  --yg-shadow-sm: 0 4px 18px rgba(0,0,0,.35);
+  --yg-shadow-md: 0 10px 32px rgba(0,0,0,.45);
+  --yg-shadow-lg: 0 18px 44px rgba(190,140,225,.35), 0 8px 22px rgba(90,170,220,.22);
+  --yg-inset-hi:  inset 0 1px 0 rgba(255,255,255,.14);
+
+  --yg-scrim-bg: rgba(4,2,14,.55);
+  --yg-page-bg-1: #0d0a1c;
+}
+
+/* ==========================================================================
+   2. Base / Reset touch-ups (light-handed — Tailwind Preflight friendly)
+   ========================================================================== */
+[data-yg-root]{
+  font-family: var(--yg-font);
+  color: var(--yg-ink);
+  -webkit-tap-highlight-color: transparent;
+  /* 背景の液体をマウスでドラッグしてかき混ぜる操作と、テキスト選択が競合しないよう
+     既定でテキスト選択をオフにする。入力欄・編集可能セル・.yg-selectable は個別に復元。 */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+[data-yg-root] ::selection{ background: rgba(219,140,220,.30); color: inherit; }
+
+/* --- 選択オフの例外: フォーム入力・編集中セル・明示的にオプトインした要素 --- */
+[data-yg-root] input:not([type="checkbox"]):not([type="radio"]),
+[data-yg-root] textarea,
+[data-yg-root] [contenteditable="true"],
+[data-yg-root] .yg-selectable{
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+.yg-scrollbar, [data-yg-root]{
+  scrollbar-width: thin;
+  scrollbar-color: rgba(219,140,220,.6) rgba(255,255,255,.12);
+}
+[data-yg-root] ::-webkit-scrollbar{ width: 8px; height: 8px; }
+[data-yg-root] ::-webkit-scrollbar-track{ background: rgba(255,255,255,.12); border-radius: 99px; }
+[data-yg-root] ::-webkit-scrollbar-thumb{
+  background-image: var(--yg-accent-grad);
+  background-clip: padding-box;
+  border: 2px solid rgba(255,255,255,.5);
+  border-radius: 99px;
+}
+
+/* ==========================================================================
+   3. Glass primitives
+   ========================================================================== */
+.yg-glass, .yg-glass-strong, .yg-glass-soft{
+  border-radius: var(--yg-radius-lg);
+  border: 1px solid var(--yg-glass-border);
+  border-top-color: var(--yg-glass-border-strong);
+  border-left-color: var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-sm), var(--yg-inset-hi);
+  backdrop-filter: blur(var(--yg-glass-blur)) saturate(var(--yg-glass-sat));
+  -webkit-backdrop-filter: blur(var(--yg-glass-blur)) saturate(var(--yg-glass-sat));
+  /* transform はここでは扱わない: .yg-glass-hover は yumeiro-glass.js の流体物理が
+     フレームごとに直接 el.style.transform / borderRadius を更新するため、CSS の
+     トランジションを重ねると二重に鈍って反応が遅く見える。 */
+  transition: box-shadow var(--yg-dur-fast) var(--yg-ease), background var(--yg-dur-fast) var(--yg-ease);
+}
+.yg-glass{ background: var(--yg-glass-bg); }
+.yg-glass-strong{ background: var(--yg-glass-bg-strong); }
+.yg-glass-soft{ background: var(--yg-glass-bg-soft); box-shadow: none; }
+
+/* .yg-glass-hover の transform / border-radius は yumeiro-glass.js（流体物理、
+   fluid-button.html 由来のソルバをボタンより速く・小さく調整したもの）が担当する。 */
+.yg-glass-hover{ will-change: transform, border-radius; transform-origin: 50% 50%; }
+.yg-glass-hover:hover{
+  background: var(--yg-glass-bg-strong);
+  box-shadow: var(--yg-shadow-lg), var(--yg-inset-hi);
+}
+
+/* [data-yg-float]: ビート板のように背景の流体に合わせて揺れる（liquid-bg.js の
+   [data-float] 収集ロジックにそのまま乗るので、CSS 側はきっかけの transform-origin
+   だけ用意しておく。JS 未接続時のフォールバック用ソフトアニメも用意。 */
+[data-yg-float]{
+  will-change: transform;
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+}
+.yg-float-fallback{ animation: yg-float-bob 6s ease-in-out infinite; }
+@keyframes yg-float-bob{
+  0%,100%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-6px) rotate(.6deg); }
+}
+@media (prefers-reduced-motion: reduce){ .yg-float-fallback{ animation: none; } }
+
+/* 本物のWebGLガラスとして [data-yg-liquid] (=[data-glass]) が再描画されている間、
+   CSS側の二重描画を消す（本家 style.css の body.gl-glass と同じ仕組み） */
+body.yg-gl-glass [data-yg-glass-sync]{
+  background: var(--yg-glass-bg-soft) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(10px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+}
+
+/* ==========================================================================
+   4. Background canvases (bubble-bg.js / liquid-bg.js)
+   ========================================================================== */
+#bubbleGl{
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: -3; pointer-events: none; visibility: hidden;
+}
+#liquid{
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: -1; touch-action: none; pointer-events: none;
+}
+.yg-bg-fallback{
+  background-image:
+    radial-gradient(60% 50% at 20% 25%, rgba(255,196,150,.55), transparent 65%),
+    radial-gradient(55% 45% at 78% 30%, rgba(255,182,215,.50), transparent 66%),
+    radial-gradient(65% 55% at 55% 78%, rgba(180,166,255,.55), transparent 66%),
+    radial-gradient(60% 50% at 12% 82%, rgba(160,232,255,.50), transparent 66%),
+    linear-gradient(160deg,#1a1430,#2a2050 55%,#152036);
+  background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+}
+
+/* ==========================================================================
+   5. Layout system — data-yg-layout
+   --------------------------------------------------------------------------
+   デフォルト: 縦並び・中央寄せ・既定ギャップ・左右自動パディング。
+   data-row="true": 横並び（PC）。ただしスマホ判定幅以下では自動的に縦に戻る。
+   data-center="false": 中央寄せ/左右パディングを無効化。
+   data-gap="sm|md|lg" または任意値(--yg-gap-override)。
+   実際の「スマホ判定」は yumeiro-glass.js が data-yg-row 属性を付け外しして
+   行う（コンテナ幅ベースの ResizeObserver）。CSS はその結果に反応するだけ。
+   ========================================================================== */
+[data-yg-layout]{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--yg-gap-override, var(--yg-gap));
+  width: 100%;
+}
+[data-yg-layout][data-yg-center="true"]{
+  max-width: var(--yg-content-max);
+  margin-inline: auto;
+  padding-inline: var(--yg-side-pad);
+}
+[data-yg-layout][data-yg-row="true"]{
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+}
+[data-yg-layout][data-yg-row="true"][data-yg-mobile="true"]{
+  flex-direction: column;
+}
+[data-yg-layout][data-yg-gap="sm"]{ --yg-gap-override: var(--yg-gap-sm); }
+[data-yg-layout][data-yg-gap="lg"]{ --yg-gap-override: var(--yg-gap-lg); }
+
+/* ==========================================================================
+   6. Sidebar / Nav — data-yg-sidebar
+   ========================================================================== */
+[data-yg-sidebar]{
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 58px;
+  display: flex; align-items: center; padding-inline: 14px; gap: 10px;
+}
+/* サイドバーは画面上端に完全にくっつくため、角丸にしない（.yg-glass の既定を上書き） */
+[data-yg-sidebar].yg-glass{ border-radius: 0; }
+.yg-sidebar-inner{
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  position: relative; /* メニューをバー全体基準で中央寄せするための基準 */
+}
+/* メニューはバー内の残り幅ではなく、バー全体の中央に絶対配置で寄せる。
+   ロゴ側とトグル側の幅が違っても常に真ん中に来るようにするため。 */
+.yg-sidebar-menu{
+  display: flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap;
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  max-width: min(96vw, 960px);
+  pointer-events: auto;
+}
+.yg-sidebar-spacer{ flex: 1 1 auto; }
+
+.yg-hamburger{
+  display: none;
+  width: 40px; height: 40px; border-radius: var(--yg-radius-sm);
+  align-items: center; justify-content: center;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--yg-ink);
+  margin-left: auto;
+}
+.yg-hamburger span{
+  display: block; width: 20px; height: 2px; border-radius: 2px;
+  background: currentColor; position: relative;
+  transition: transform var(--yg-dur) var(--yg-ease), opacity var(--yg-dur) var(--yg-ease);
+}
+.yg-hamburger span::before, .yg-hamburger span::after{
+  content: ''; position: absolute; left: 0; width: 20px; height: 2px; border-radius: 2px;
+  background: currentColor; transition: transform var(--yg-dur) var(--yg-ease);
+}
+.yg-hamburger span::before{ top: -6px; }
+.yg-hamburger span::after{ top: 6px; }
+.yg-hamburger.is-open span{ background: transparent; }
+.yg-hamburger.is-open span::before{ top: 0; transform: rotate(45deg); }
+.yg-hamburger.is-open span::after{ top: 0; transform: rotate(-45deg); }
+
+/* --- mobile drawer (右からスライド、奥はぼやける) --- */
+.yg-scrim{
+  position: fixed; inset: 0; z-index: 210;
+  background: var(--yg-scrim-bg);
+  backdrop-filter: blur(var(--yg-scrim-blur));
+  -webkit-backdrop-filter: blur(var(--yg-scrim-blur));
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--yg-dur) var(--yg-ease);
+}
+.yg-scrim.is-visible{ opacity: 1; pointer-events: auto; }
+
+.yg-drawer{
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: min(78vw, 320px); z-index: 220;
+  padding: 22px 18px; padding-top: max(22px, env(safe-area-inset-top));
+  display: flex; flex-direction: column; gap: 6px;
+  border-radius: var(--yg-radius-lg) 0 0 var(--yg-radius-lg);
+  background: var(--yg-glass-bg-strong);
+  border-left: 1px solid var(--yg-glass-border-strong);
+  box-shadow: -18px 0 50px rgba(80,50,20,.18);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  transform: translateX(100%);
+  transition: transform var(--yg-dur-slow) var(--yg-ease-pop);
+}
+.yg-drawer.is-open{ transform: translateX(0); }
+.yg-drawer .yg-sidebar-menu{ flex-direction: column; align-items: stretch; gap: 4px; margin-top: 8px; }
+.yg-drawer .yg-nav-btn{ width: 100%; justify-content: flex-start; }
+
+@media (max-width: 720px){
+  .yg-sidebar-menu:not(.yg-drawer .yg-sidebar-menu){ display: none; }
+  .yg-hamburger{ display: inline-flex; }
+}
+
+/* --- nav buttons --- */
+.yg-nav-btn{
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 15px; border-radius: var(--yg-radius-sm);
+  font-size: 13px; font-weight: 700; letter-spacing: .01em;
+  color: var(--yg-ink-soft); background: transparent; border: none; cursor: pointer;
+  transition: background var(--yg-dur-fast) var(--yg-ease), color var(--yg-dur-fast) var(--yg-ease), box-shadow var(--yg-dur-fast) var(--yg-ease);
+  white-space: nowrap;
+}
+.yg-nav-btn:hover{ background: rgba(255,255,255,.5); color: var(--yg-accent); }
+[data-yg-theme="dark"] .yg-nav-btn:hover{ background: rgba(255,255,255,.08); }
+.yg-nav-btn.is-active{
+  background: var(--yg-glass-bg-strong); color: var(--yg-accent);
+  box-shadow: 0 2px 10px rgba(219,140,220,.28);
+}
+
+/* ==========================================================================
+   7. Popover — dialog / accordion（開閉というより手前にポップアップ）
+   ========================================================================== */
+.yg-popover-scrim{
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--yg-scrim-bg);
+  backdrop-filter: blur(var(--yg-scrim-blur));
+  -webkit-backdrop-filter: blur(var(--yg-scrim-blur));
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--yg-dur) var(--yg-ease);
+}
+.yg-popover-scrim.is-visible{ opacity: 1; pointer-events: auto; }
+
+.yg-popover{
+  position: fixed; z-index: 310;
+  min-width: 220px; max-width: min(92vw, 480px);
+  max-height: min(78vh, 640px); overflow: auto;
+  padding: 18px 20px;
+  border-radius: var(--yg-radius-lg);
+  background: var(--yg-glass-bg-strong);
+  border: 1px solid var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-lg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  opacity: 0; transform: translateY(8px) scale(.96);
+  pointer-events: none;
+  transition: opacity var(--yg-dur) var(--yg-ease-pop), transform var(--yg-dur) var(--yg-ease-pop);
+}
+.yg-popover.is-open{ opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.yg-popover.yg-popover-center{
+  left: 50% !important; top: 50% !important;
+  transform: translate(-50%,-46%) scale(.96);
+}
+.yg-popover.yg-popover-center.is-open{ transform: translate(-50%,-50%) scale(1); }
+
+.yg-accordion-trigger{ cursor: pointer; }
+.yg-accordion-trigger .yg-chevron{ transition: transform var(--yg-dur) var(--yg-ease); display: inline-block; }
+.yg-accordion-trigger.is-open .yg-chevron{ transform: rotate(180deg); }
+
+/* ==========================================================================
+   8. Notification banners (toast)
+   ========================================================================== */
+.yg-toast-region{
+  position: fixed; z-index: 400; display: flex; flex-direction: column-reverse;
+  pointer-events: none;
+}
+.yg-toast-region[data-pos="desktop"]{
+  right: 18px; bottom: 18px; gap: 10px; align-items: flex-end;
+  width: min(340px, 92vw);
+}
+.yg-toast-region[data-pos="mobile"]{
+  left: 50%; bottom: 18px; transform: translateX(-50%);
+  width: min(92vw, 380px); align-items: stretch;
+}
+
+.yg-toast{
+  position: relative; overflow: hidden; pointer-events: auto;
+  width: 100%; padding: 12px 16px 14px;
+  border-radius: var(--yg-radius-md);
+  background: var(--yg-glass-bg-strong);
+  border: 1px solid var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-md);
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  opacity: 0; transition: opacity var(--yg-dur) var(--yg-ease), transform var(--yg-dur) var(--yg-ease-pop);
+}
+.yg-toast-region[data-pos="desktop"] .yg-toast{ transform: translateX(24px); }
+.yg-toast-region[data-pos="desktop"] .yg-toast.is-shown{ opacity: 1; transform: translateX(0); }
+.yg-toast-region[data-pos="desktop"] .yg-toast.is-stacked{ opacity: .55; transform: translateY(0) scale(.96); }
+
+.yg-toast-region[data-pos="mobile"] .yg-toast{ transform: translateY(24px); }
+.yg-toast-region[data-pos="mobile"] .yg-toast.is-shown{ opacity: 1; transform: translateY(0); }
+
+.yg-toast-title{ font-size: 13px; font-weight: 800; color: var(--yg-ink); margin: 0 0 2px; }
+.yg-toast-msg{ font-size: 12.5px; color: var(--yg-ink-soft); margin: 0; line-height: 1.5; }
+.yg-toast-close{
+  position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 999px;
+  border: none; background: rgba(0,0,0,.05); color: var(--yg-ink-soft); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.yg-toast-timer{
+  position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+  background: rgba(0,0,0,.08); overflow: hidden;
+}
+.yg-toast-timer::after{
+  content: ''; position: absolute; inset: 0; background: var(--yg-accent-grad);
+  transform-origin: left center;
+  animation-name: yg-toast-shrink; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes yg-toast-shrink{ from{ transform: scaleX(1); } to{ transform: scaleX(0); } }
+
+/* ==========================================================================
+   8-b. Dialog — alert / confirm / dialog（標準の alert() / confirm() の置き換え）
+   --------------------------------------------------------------------------
+   JS: YumeiroGlass.alert() / .confirm() / .dialog()（yumeiro-glass.js §8-b）。
+   ・奥は popover と同じスクリムでぼやける。手前に「シャボン玉のアイコン」つきの
+     ガラスパネルがぽんっと現れる。
+   ・ボタンは .yg-dialog-btn（既定ボタンの見た目を継承しつつ、流体物理も有効）。
+     バリアント: なし=主ボタン / .is-secondary=控えめ / .is-danger=注意（削除など）
+   ・トーン: .yg-dialog-danger でアイコンの色がローズになる。
+   ・opacity は layer ではなく scrim / panel 個別に持たせる。親に opacity があると
+     子の backdrop-filter が効かなくなる（Backdrop Root になる）ため。
+   ========================================================================== */
+.yg-dialog-layer{
+  position: fixed; inset: 0; z-index: 350; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.yg-dialog-layer.is-open{ pointer-events: auto; }
+
+.yg-dialog-scrim{
+  position: absolute; inset: 0;
+  background: var(--yg-scrim-bg);
+  backdrop-filter: blur(var(--yg-scrim-blur));
+  -webkit-backdrop-filter: blur(var(--yg-scrim-blur));
+  opacity: 0; transition: opacity var(--yg-dur) var(--yg-ease);
+}
+.yg-dialog-layer.is-open .yg-dialog-scrim{ opacity: 1; }
+
+.yg-dialog{
+  position: relative; box-sizing: border-box;
+  width: min(100%, 400px); max-height: min(88vh, 660px);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 28px 24px 22px;
+  text-align: center;
+  border-radius: var(--yg-radius-xl);
+  background: var(--yg-glass-bg-strong);
+  border: 1px solid var(--yg-glass-border);
+  border-top-color: var(--yg-glass-border-strong);
+  border-left-color: var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-lg), var(--yg-inset-hi);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  opacity: 0; transform: translateY(14px) scale(.94);
+  transition: opacity var(--yg-dur) var(--yg-ease), transform var(--yg-dur-slow) var(--yg-ease-pop);
+  outline: none;
+}
+.yg-dialog-layer.is-open .yg-dialog{ opacity: 1; transform: none; }
+
+/* シャボン玉のアイコン: 左上のハイライト＋ゆめいろの膜 */
+.yg-dialog-icon{
+  flex: none; width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; line-height: 1;
+  /* 膜はテーマに関係なく明るいので、🗑 のように文字色で描かれる絵文字がダークで同化しないよう色を固定 */
+  color: #6b5a6e;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,.95) 0, rgba(255,255,255,.42) 24%, transparent 46%),
+    var(--yg-accent-grad-soft);
+  border: 1px solid var(--yg-glass-border-strong);
+  box-shadow: 0 8px 22px rgba(203,178,242,.38), inset 0 -6px 12px rgba(255,255,255,.35), var(--yg-inset-hi);
+  opacity: 0; transform: scale(.55);
+  transition: opacity var(--yg-dur) var(--yg-ease) .06s, transform var(--yg-dur-slow) var(--yg-ease-pop) .06s;
+}
+.yg-dialog-layer.is-open .yg-dialog-icon{ opacity: 1; transform: none; }
+.yg-dialog-danger .yg-dialog-icon{
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,.95) 0, rgba(255,255,255,.42) 24%, transparent 46%),
+    linear-gradient(135deg, #ffc3d6, #ffdcc4);
+  box-shadow: 0 8px 22px rgba(255,140,175,.38), inset 0 -6px 12px rgba(255,255,255,.35), var(--yg-inset-hi);
+}
+
+.yg-dialog-title{
+  margin: 4px 0 0; font-size: 17px; font-weight: 800; line-height: 1.55;
+  color: var(--yg-ink); overflow-wrap: anywhere;
+  word-break: auto-phrase; text-wrap: balance;   /* 「う。」だけ次の行に落ちるような改行を避ける */
+}
+.yg-dialog-msg{
+  margin: 0; font-size: 13.5px; line-height: 1.85;
+  color: var(--yg-ink); opacity: .82;
+  white-space: pre-line; overflow-wrap: anywhere;
+  word-break: auto-phrase; text-wrap: balance;
+  max-height: 38vh; overflow-y: auto; overscroll-behavior: contain;
+  /* ゆめいろグラスは全体を user-select:none にするので、読み返し・コピーできるよう戻す */
+  -webkit-user-select: text; -moz-user-select: text; user-select: text;
+}
+/* エラー内容など、コピーしたくなる技術的な詳細 */
+.yg-dialog-detail{
+  align-self: stretch; box-sizing: border-box; margin: 2px 0 0; padding: 10px 12px;
+  text-align: left; white-space: pre-wrap; overflow-wrap: anywhere;
+  font: 11.5px/1.7 'Outfit', ui-monospace, monospace; color: var(--yg-ink); opacity: .82;
+  background: var(--yg-glass-bg-soft); border: 1px solid var(--yg-glass-border);
+  border-radius: var(--yg-radius-sm);
+  max-height: 120px; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-user-select: text; -moz-user-select: text; user-select: text;
+}
+
+.yg-dialog-actions{
+  align-self: stretch; display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 10px; margin-top: 10px;
+}
+
+/* --- ダイアログ専用ボタン: 既定ボタンと同じ質感（.yg-dialog-btn は既定スタイルの適用対象外なので自前で持つ） --- */
+.yg-dialog .yg-dialog-btn{
+  position: relative; isolation: isolate; overflow: hidden;
+  flex: 1 1 120px; min-width: 0;
+  font-family: var(--yg-font); font-weight: 700; font-size: 14px; letter-spacing: .02em;
+  color: var(--yg-ink-on-accent);
+  padding: 11px 20px;
+  border: 0; border-radius: var(--yg-radius-md);
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  background: var(--yg-accent-grad);
+  box-shadow: 0 10px 26px rgba(219,140,220,.32), inset 0 1px 0 rgba(255,255,255,.45);
+  transform: translateZ(0); will-change: transform, border-radius;
+}
+.yg-dialog .yg-dialog-btn.is-secondary{
+  color: var(--yg-ink-soft);
+  background: var(--yg-glass-bg);
+  border: 1px solid var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-sm), var(--yg-inset-hi);
+}
+.yg-dialog .yg-dialog-btn.is-secondary:hover{ color: var(--yg-ink); background: var(--yg-glass-bg-strong); }
+.yg-dialog .yg-dialog-btn.is-danger{
+  background: var(--yg-danger-grad);
+  text-shadow: 0 1px 2px rgba(120,40,80,.28);
+  box-shadow: 0 10px 26px rgba(238,111,156,.34), inset 0 1px 0 rgba(255,255,255,.45);
+}
+.yg-dialog .yg-dialog-btn:focus-visible{
+  outline: 3px solid rgba(148,208,245,.65); outline-offset: 2px;
+}
+
+@media (max-width: 480px){
+  /* 縦積み。主ボタンが一番上に来るよう、DOM の並び（主ボタンが最後）を反転する */
+  .yg-dialog-actions{ flex-direction: column-reverse; }
+  .yg-dialog .yg-dialog-btn{ flex: none; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce){
+  .yg-dialog-scrim, .yg-dialog, .yg-dialog-icon{ transition: opacity .01s linear; transform: none; }
+}
+
+/* ==========================================================================
+   9. Sub-page router — data-yg-page
+   ========================================================================== */
+[data-yg-page]{ display: none; }
+[data-yg-page].is-active{ display: block; animation: yg-page-fade var(--yg-dur) var(--yg-ease); }
+@keyframes yg-page-fade{ from{ opacity: 0; transform: translateY(6px); } to{ opacity: 1; transform: translateY(0); } }
+
+/* ==========================================================================
+   10. Media defaults — img / video / iframe
+   ========================================================================== */
+[data-yg-root] img:not(.yg-plain):not(.yg-avatar),
+[data-yg-root] video:not(.yg-plain),
+[data-yg-root] iframe:not(.yg-plain){
+  border-radius: var(--yg-radius-media);
+  box-shadow:
+    0 0 0 5px rgba(255,255,255,.55),
+    0 0 26px rgba(255,255,255,.55),
+    0 10px 30px rgba(80,50,20,.14);
+  max-width: 100%;
+}
+[data-yg-theme="dark"] [data-yg-root] img:not(.yg-plain):not(.yg-avatar),
+[data-yg-theme="dark"] [data-yg-root] video:not(.yg-plain),
+[data-yg-theme="dark"] [data-yg-root] iframe:not(.yg-plain){
+  box-shadow:
+    0 0 0 5px rgba(255,255,255,.08),
+    0 0 26px rgba(140,110,255,.28),
+    0 10px 30px rgba(0,0,0,.5);
+}
+[data-yg-root] .yg-avatar{ border-radius: 999px; }
+
+/* ==========================================================================
+   11. Form controls — input / textarea / select / button
+   ========================================================================== */
+[data-yg-root] input:not([type="checkbox"]):not([type="radio"]):not(.yg-plain),
+[data-yg-root] textarea:not(.yg-plain){
+  font-family: var(--yg-font);
+  font-size: 14px; color: var(--yg-ink);
+  background: var(--yg-glass-bg);
+  border: 1px solid var(--yg-glass-border);
+  border-radius: var(--yg-radius-sm);
+  padding: 10px 14px;
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: var(--yg-inset-hi);
+  outline: none;
+  transition: box-shadow var(--yg-dur-fast) var(--yg-ease), background var(--yg-dur-fast) var(--yg-ease), border-color var(--yg-dur-fast) var(--yg-ease);
+}
+[data-yg-root] input:not([type="checkbox"]):not([type="radio"]):not(.yg-plain)::placeholder,
+[data-yg-root] textarea:not(.yg-plain)::placeholder{
+  color: var(--yg-ink-faint); font-family: var(--yg-font); font-weight: 400;
+}
+[data-yg-root] input:not([type="checkbox"]):not([type="radio"]):not(.yg-plain):focus,
+[data-yg-root] textarea:not(.yg-plain):focus{
+  background: var(--yg-glass-bg-strong);
+  border-color: var(--yg-accent-3);
+  box-shadow: var(--yg-inset-hi), 0 0 0 3px rgba(170,217,247,.30);
+}
+[data-yg-root] textarea:not(.yg-plain){ min-height: 96px; resize: vertical; }
+
+/* --- buttons: base glass look. Physics (squash / capillary edges / drift)
+     is applied at runtime by yumeiro-glass.js, ported from fluid-button.html.
+     Other component classes (nav / chip / select-trigger / icon-btn / ...)
+     opt out, since they carry their own shape & motion language. --- */
+[data-yg-root] button:not(.yg-plain):not(.yg-icon-btn):not(.yg-nav-btn):not(.yg-toggle-chip):not(.yg-select-trigger):not(.yg-audio-play):not(.yg-hamburger):not(.yg-toast-close):not(.yg-dialog-btn),
+[data-yg-root] .yg-btn:not(.yg-plain){
+  position: relative; isolation: isolate; overflow: hidden;
+  font-family: var(--yg-font); font-weight: 700; font-size: 14px; letter-spacing: .02em;
+  color: var(--yg-ink-on-accent);
+  padding: 10px 22px;
+  border: 0; border-radius: var(--yg-radius-md);
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  background: var(--yg-accent-grad);
+  box-shadow: 0 10px 26px rgba(219,140,220,.32), inset 0 1px 0 rgba(255,255,255,.45);
+  transform: translateZ(0);
+  will-change: transform, border-radius;
+}
+[data-yg-root] button:not(.yg-plain):not(.yg-icon-btn) .yg-btn-label,
+[data-yg-root] .yg-btn .yg-btn-label{ position: relative; z-index: 2; display: block; will-change: transform; pointer-events: none; }
+[data-yg-root] button:not(.yg-plain):not(.yg-icon-btn) .yg-btn-sheen,
+[data-yg-root] .yg-btn .yg-btn-sheen{
+  position: absolute; inset: -30%; z-index: 1; pointer-events: none;
+  background: radial-gradient(38% 46% at var(--yg-gx,50%) var(--yg-gy,50%),
+    rgba(255,255,255, calc(.5 * var(--yg-glow,0) + .12)) 0%, rgba(255,255,255,.05) 45%, transparent 72%);
+  mix-blend-mode: screen;
+}
+[data-yg-root] button.yg-btn-outline, [data-yg-root] .yg-btn.yg-btn-outline{
+  background: var(--yg-glass-bg); color: var(--yg-accent);
+  box-shadow: var(--yg-shadow-sm), inset 0 0 0 1.5px rgba(219,140,220,.6);
+}
+[data-yg-root] button.yg-btn-ghost, [data-yg-root] .yg-btn.yg-btn-ghost{
+  background: transparent; color: var(--yg-ink-soft); box-shadow: none;
+}
+[data-yg-root] button:disabled, [data-yg-root] .yg-btn.is-disabled{
+  opacity: .45; cursor: not-allowed; filter: grayscale(30%);
+}
+
+/* --- icon button (round, e.g. hamburger companions, toggle chips) --- */
+.yg-icon-btn{
+  width: 40px; height: 40px; border-radius: 999px; display: inline-flex;
+  align-items: center; justify-content: center; cursor: pointer;
+  background: var(--yg-glass-bg); border: 1px solid var(--yg-glass-border);
+  color: var(--yg-ink-soft); transition: all var(--yg-dur-fast) var(--yg-ease);
+}
+.yg-icon-btn:hover{ background: var(--yg-glass-bg-strong); color: var(--yg-accent); transform: translateY(-1px); }
+
+/* --- select: custom "glass slot reel" dropdown (native select hidden, kept for a11y) --- */
+.yg-select{ position: relative; display: inline-block; width: 100%; font-family: var(--yg-font); }
+.yg-select select{
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; pointer-events: none;
+}
+.yg-select-trigger{
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 14px; width: 100%;
+  background: var(--yg-glass-bg); border: 1px solid var(--yg-glass-border);
+  border-radius: var(--yg-radius-sm); box-shadow: var(--yg-inset-hi);
+  backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
+  cursor: pointer; font-size: 14px; color: var(--yg-ink);
+  transition: box-shadow var(--yg-dur-fast) var(--yg-ease), background var(--yg-dur-fast) var(--yg-ease);
+}
+.yg-select-trigger .yg-chevron{ color: var(--yg-ink-faint); transition: transform var(--yg-dur) var(--yg-ease); }
+.yg-select.is-open .yg-select-trigger{ background: var(--yg-glass-bg-strong); box-shadow: var(--yg-inset-hi), 0 0 0 3px rgba(170,217,247,.28); }
+.yg-select.is-open .yg-select-trigger .yg-chevron{ transform: rotate(180deg); }
+
+.yg-select-reel{
+  position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 60;
+  max-height: 258px; overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: 6px; padding: 10px;
+  border-radius: var(--yg-radius-lg);
+  background: var(--yg-glass-bg-strong); border: 1px solid var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-lg);
+  backdrop-filter: blur(26px) saturate(180%); -webkit-backdrop-filter: blur(26px) saturate(180%);
+  opacity: 0; transform: translateY(-6px) scaleY(.96); transform-origin: top center;
+  pointer-events: none;
+  transition: opacity var(--yg-dur) var(--yg-ease-pop), transform var(--yg-dur) var(--yg-ease-pop);
+}
+.yg-select.is-open .yg-select-reel{ opacity: 1; transform: translateY(0) scaleY(1); pointer-events: auto; }
+
+.yg-select-option{
+  padding: 10px 12px; border-radius: var(--yg-radius-sm);
+  background: var(--yg-glass-bg); border: 1px solid var(--yg-glass-border);
+  font-size: 14px; font-weight: 500; color: var(--yg-ink); cursor: pointer;
+  transition: background var(--yg-dur-fast) var(--yg-ease), color var(--yg-dur-fast) var(--yg-ease), box-shadow var(--yg-dur-fast) var(--yg-ease);
+}
+.yg-select-option:hover{ background: var(--yg-glass-bg-strong); color: var(--yg-ink); }
+.yg-select-option.is-selected{
+  background: var(--yg-accent-grad-soft); color: var(--yg-ink-on-accent); font-weight: 700;
+  box-shadow: 0 6px 18px rgba(170,217,247,.35);
+}
+
+/* ==========================================================================
+   12. Table — Excel-like
+   ========================================================================== */
+.yg-table-wrap{
+  border-radius: var(--yg-radius-sm); overflow: auto; max-width: 100%;
+  background: var(--yg-glass-bg-strong); border: 1px solid var(--yg-glass-border);
+  box-shadow: var(--yg-shadow-sm); backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+table.yg-table{
+  border-collapse: separate; border-spacing: 0; width: 100%;
+  font-size: 13.5px; text-align: center; color: var(--yg-ink);
+  user-select: none;
+}
+.yg-table thead th{
+  position: sticky; top: 0; z-index: 2;
+  background: var(--yg-glass-bg-strong);
+  font-weight: 800; padding: 10px 12px; color: var(--yg-ink);
+  border-bottom: 1px solid var(--yg-glass-border-strong);
+}
+.yg-table tbody th{ /* 見出し用の列（1列目が th の場合） */
+  background: rgba(219,140,220,.12); font-weight: 700;
+  border-right: 1px solid var(--yg-glass-border);
+}
+.yg-table td{ padding: 8px 12px; border-bottom: 1px solid rgba(0,0,0,.05); position: relative; }
+.yg-table tbody tr:nth-child(even) td{ background: rgba(255,255,255,.28); }
+.yg-table tbody tr:nth-child(odd) td{ background: rgba(255,255,255,.08); }
+[data-yg-theme="dark"] .yg-table tbody tr:nth-child(even) td{ background: rgba(255,255,255,.05); }
+[data-yg-theme="dark"] .yg-table tbody tr:nth-child(odd) td{ background: rgba(255,255,255,.015); }
+.yg-table td.is-selected{
+  box-shadow: inset 0 0 0 2px var(--yg-accent-3);
+  background: rgba(170,217,247,.16) !important;
+}
+.yg-table td[tabindex]{ outline: none; cursor: cell; }
+.yg-table tbody tr:hover td{ background: rgba(170,217,247,.12) !important; }
+
+/* ==========================================================================
+   13. Audio — custom player + persistent mini bar
+   ========================================================================== */
+audio.yg-native-hidden{ display: none; }
+
+.yg-audio{
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px;
+  border-radius: var(--yg-radius-pill);
+  background: var(--yg-glass-bg); border: 1px solid var(--yg-glass-border);
+  box-shadow: var(--yg-inset-hi); backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
+  max-width: 420px; width: 100%;
+}
+.yg-audio-play{
+  flex: 0 0 auto; width: 38px; height: 38px; border-radius: 999px; border: 0; cursor: pointer;
+  background: var(--yg-accent-grad); color: var(--yg-ink-on-accent); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 16px rgba(219,140,220,.4);
+}
+.yg-audio-body{ flex: 1 1 auto; min-width: 0; }
+.yg-audio-title{ font-size: 12px; font-weight: 700; color: var(--yg-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yg-audio-bar{ position: relative; height: 6px; border-radius: 99px; background: rgba(0,0,0,.08); margin-top: 6px; cursor: pointer; }
+.yg-audio-bar-fill{ position: absolute; inset: 0; width: 0%; border-radius: inherit; background: var(--yg-accent-grad); }
+.yg-audio-time{ font-size: 10px; color: var(--yg-ink-faint); margin-top: 3px; }
+
+.yg-audio-dock{
+  position: fixed; left: 50%; bottom: 14px; transform: translate(-50%, 130%);
+  z-index: 380; width: min(520px, 94vw);
+  padding: 10px 16px; border-radius: var(--yg-radius-pill);
+  background: var(--yg-glass-bg-strong); border: 1px solid var(--yg-glass-border-strong);
+  box-shadow: var(--yg-shadow-lg); backdrop-filter: blur(26px) saturate(180%); -webkit-backdrop-filter: blur(26px) saturate(180%);
+  display: flex; align-items: center; gap: 12px;
+  transition: transform var(--yg-dur-slow) var(--yg-ease-pop);
+}
+.yg-audio-dock.is-visible{ transform: translate(-50%, 0); }
+
+/* ==========================================================================
+   14. Utility chips (theme / bgm / sfx toggles)
+   ========================================================================== */
+.yg-toggle-chip{
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 13px; border-radius: 999px; cursor: pointer;
+  background: var(--yg-glass-bg); border: 1px solid var(--yg-glass-border);
+  color: var(--yg-ink-soft); font-size: 12.5px; font-weight: 700;
+  transition: all var(--yg-dur-fast) var(--yg-ease);
+}
+.yg-toggle-chip:hover{ background: var(--yg-glass-bg-strong); }
+.yg-toggle-chip[data-state="on"]{ color: var(--yg-accent); box-shadow: 0 2px 10px rgba(219,140,220,.28); }
+.yg-toggle-chip .yg-dot{ width: 7px; height: 7px; border-radius: 999px; background: var(--yg-ink-faint); }
+.yg-toggle-chip[data-state="on"] .yg-dot{ background: var(--yg-accent); box-shadow: 0 0 6px var(--yg-accent); }
+
+/* ==========================================================================
+   15. Responsive helpers
+   ========================================================================== */
+@media (max-width: 720px){
+  [data-yg-layout][data-yg-center="true"]{ padding-inline: var(--yg-side-pad); }
+}
